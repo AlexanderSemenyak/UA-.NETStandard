@@ -62,6 +62,7 @@ namespace Quickstarts.ReferenceServer
             bool appLog = false;
             bool renewCertificate = false;
             bool shadowConfig = false;
+            bool cttMode = false;
             string password = null;
             int timeout = -1;
 
@@ -76,6 +77,7 @@ namespace Quickstarts.ReferenceServer
                 { "r|renew", "renew application certificate", r => renewCertificate = r != null },
                 { "t|timeout=", "timeout in seconds to exit application", (int t) => timeout = t * 1000 },
                 { "s|shadowconfig", "create configuration in pki root", s => shadowConfig = s != null },
+                { "ctt", "CTT mode, use to preset alarms for CTT testing.", c => cttMode = c != null },
             };
 
             try
@@ -128,6 +130,14 @@ namespace Quickstarts.ReferenceServer
                 output.WriteLine("Start the server.");
                 await server.StartAsync().ConfigureAwait(false);
 
+                // Apply custom settings for CTT testing
+                if (cttMode)
+                {
+                    output.WriteLine("Apply settings for CTT.");
+                    // start Alarms and other settings for CTT test
+                    Quickstarts.Servers.Utils.ApplyCTTMode(output, server.Server);
+                }
+
                 output.WriteLine("Server started. Press Ctrl-C to exit...");
 
                 // wait for timeout or Ctrl-C
@@ -148,4 +158,5 @@ namespace Quickstarts.ReferenceServer
         }
     }
 }
+
 
